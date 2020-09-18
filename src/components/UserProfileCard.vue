@@ -24,7 +24,11 @@
           </ul>
           <p></p>
           <form action="/following/102?_method=DELETE" method="POST" style="display: contents;">
-            <a href="#" class="btn btn-primary" v-if="isCurrentUser">Edit</a>
+            <router-link
+              :to="{ name: 'user-edit' , params: { id: user.id }}"
+              class="btn btn-primary"
+              v-if="isCurrentUser"
+            >Edit</router-link>
             <template v-else>
               <button
                 type="submit"
