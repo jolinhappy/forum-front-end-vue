@@ -18,13 +18,13 @@
           <button
             type="button"
             class="btn btn-danger mr-2"
-            @click.prevent.stop="deleteFavorite"
+            @click.prevent.stop="deleteFavorite(restaurant.id)"
             v-if="restaurant.isFavorited"
           >移除最愛</button>
           <button
             type="button"
             class="btn btn-primary"
-            @click.prevent.stop="addFavorite"
+            @click.prevent.stop="addFavorite(restaurant.id)"
             v-else
           >加到最愛</button>
         </div>
@@ -35,6 +35,8 @@
 
 <script>
 import { emptyImageFilter } from "./../utils/mixins";
+import { Toast } from "./../utils/helpers";
+import restaurantsApi from "./../apis/restaurants";
 
 export default {
   mixins: [emptyImageFilter],
@@ -50,17 +52,43 @@ export default {
     };
   },
   methods: {
-    addFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: true,
-      };
+    async addFavorite(restaurantId) {
+      try {
+        const { data } = await restaurantsApi.addFavorite({ restaurantId });
+        console.log(data);
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: true,
+        };
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法把餐廳加入最愛，請稍後再試",
+        });
+      }
     },
-    deleteFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: false,
-      };
+    async deleteFavorite(restaurantId) {
+      try {
+        const { data } = await restaurantsApi.deleteFavorite({ restaurantId });
+        console.log(data);
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: false,
+        };
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法把餐廳移除最愛，請稍後再試",
+        });
+      }
     },
   },
 };

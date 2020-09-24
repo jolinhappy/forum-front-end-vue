@@ -77,6 +77,8 @@
 </template>
 
 <script>
+import authorizationAPI from "./../apis/authorization";
+import { Toast } from "./../utils/helpers";
 export default {
   data() {
     return {
@@ -87,14 +89,44 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck,
-      });
-      console.log("data", data);
+    async handleSubmit() {
+      try {
+        if (
+          !this.name ||
+          !this.email ||
+          !this.password ||
+          !this.passwordCheck
+        ) {
+          Toast.fire({
+            icon: "error",
+            title: "請將資料全部填寫完畢",
+          });
+          return;
+        } else if (this.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: "error",
+            title: "密碼填寫不一致",
+          });
+          return;
+        }
+        const { data } = await authorizationAPI.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck,
+        });
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        // const res = await authorizationAPI.signUp({ data });
+        // console.log(res);
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法註冊",
+        });
+      }
     },
   },
 };

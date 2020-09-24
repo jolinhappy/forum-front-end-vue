@@ -28,7 +28,7 @@
       </li>
 
       <!-- 後一頁 nextPage -->
-      <li v-show="nextPage" :class="['page-item', { disabled: currentPage === totalPage }]">
+      <li v-show="nextPage" :class="['page-item', { disabled: currentPage === totalPage.length }]">
         <router-link
           class="page-link"
           :to="{ name: 'restaurants', query: { categoryId, page: nextPage } }"
@@ -53,7 +53,7 @@ export default {
       default: 1,
     },
     totalPage: {
-      type: Number,
+      type: Array,
       required: true,
     },
     previousPage: {

@@ -2,13 +2,15 @@
   <div class="row">
     <div class="col-md-12 mb-3">
       <h1>{{ restaurant.name }}</h1>
-      <p class="badge badge-secondary mt-1 mb-3">{{ restaurant.categoryName }}</p>
+      <p class="badge badge-secondary mt-1 mb-3">
+        {{ restaurant.categoryName }}
+      </p>
     </div>
     <div class="col-lg-4">
       <img
         class="img-responsive center-block"
-        :src="restaurant.image | emptyImageFilter"
-        style="width: 250px;margin-bottom: 25px;"
+        :src="restaurant.image | emptyImage"
+        style="width: 250px; margin-bottom: 25px"
       />
       <div class="contact-info-wrap">
         <ul class="list-unstyled">
@@ -36,25 +38,33 @@
         class="btn btn-danger btn-border mr-2"
         @click.prevent.stop="deleteFavorite"
         v-if="restaurant.isFavorited"
-      >移除最愛</button>
+      >
+        移除最愛
+      </button>
       <button
         type="button"
         class="btn btn-primary btn-border mr-2"
         @click.prevent.stop="addFavorite"
         v-else
-      >加到最愛</button>
+      >
+        加到最愛
+      </button>
       <button
         type="button"
         class="btn btn-danger like mr-2"
         @click.prevent.stop="deleteLike"
         v-if="restaurant.isLiked"
-      >Unlike</button>
+      >
+        Unlike
+      </button>
       <button
         type="button"
         class="btn btn-primary like mr-2"
         @click.prevent.stop="addLike"
         v-else
-      >Like</button>
+      >
+        Like
+      </button>
     </div>
   </div>
 </template>
@@ -74,6 +84,14 @@ export default {
     return {
       restaurant: this.initialRestaurant,
     };
+  },
+  watch: {
+    initialRestaurant(newValue) {
+      this.restaurant = {
+        ...this.restaurant,
+        ...newValue,
+      };
+    },
   },
   methods: {
     addLike() {
