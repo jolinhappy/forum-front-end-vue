@@ -63,7 +63,9 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Submit</button>
+      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
+        Submit
+      </button>
 
       <div class="text-center mb-3">
         <p>
@@ -118,8 +120,11 @@ export default {
         if (data.status === "error") {
           throw new Error(data.message);
         }
-        // const res = await authorizationAPI.signUp({ data });
-        // console.log(res);
+        Toast.fire({
+          icon: "success",
+          title: "註冊成功",
+        });
+        this.$router.push("/signin");
       } catch (error) {
         console.log("error", error);
         Toast.fire({

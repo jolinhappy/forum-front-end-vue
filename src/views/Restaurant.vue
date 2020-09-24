@@ -93,7 +93,7 @@ export default {
           isFavorited,
           isLiked,
         };
-        this.restaurantComments = Comments;
+        this.restaurantComments = [] || Comments;
       } catch (error) {
         console.log("error", error);
         Toast.fire({

@@ -2,46 +2,55 @@
   <div class="card mb-3">
     <div class="row no-gutters">
       <div class="col-md-4">
-        <img :src="user.image | emptyImage " width="300px" height="300px" />
+        <img :src="user.image | emptyImage" width="300px" height="300px" />
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h5 class="card-title">{{user.name}}</h5>
-          <p class="card-text">{{user.email}}</p>
+          <h5 class="card-title">{{ user.name }}</h5>
+          <p class="card-text">{{ user.email }}</p>
           <ul class="list-unstyled list-inline">
             <li>
-              <strong>{{user.commentsLength}}</strong> 已評論餐廳
+              <strong>{{ user.commentsLength }}</strong> 已評論餐廳
             </li>
             <li>
-              <strong>{{user.favoritedRestaurantsLength}}</strong> 收藏的餐廳
+              <strong>{{ user.favoritedRestaurantsLength }}</strong> 收藏的餐廳
             </li>
             <li>
-              <strong>{{user.followingLength}}</strong> followings (追蹤者)
+              <strong>{{ user.followingLength }}</strong> followings (追蹤者)
             </li>
             <li>
-              <strong>{{user.followersLength}}</strong> followers (追隨者)
+              <strong>{{ user.followersLength }}</strong> followers (追隨者)
             </li>
           </ul>
           <p></p>
-          <form action="/following/102?_method=DELETE" method="POST" style="display: contents;">
+          <form
+            action="/following/102?_method=DELETE"
+            method="POST"
+            style="display: contents"
+          >
             <router-link
-              :to="{ name: 'user-edit' , params: { id: user.id }}"
+              :to="{ name: 'user-edit', params: { id: user.id } }"
               class="btn btn-primary"
               v-if="isCurrentUser"
-            >Edit</router-link>
+              >Edit</router-link
+            >
             <template v-else>
               <button
                 type="submit"
                 class="btn btn-danger"
-                v-if="user.isFollowed"
-                @click.prevent.stop="deleteFollow"
-              >取消追蹤</button>
+                v-if="isFollowed"
+                @click.prevent.stop="deleteFollow(user.id)"
+              >
+                取消追蹤
+              </button>
               <button
                 type="submit"
                 class="btn btn-primary"
                 v-else
-                @click.prevent.stop="addFollow"
-              >追蹤</button>
+                @click.prevent.stop="addFollow(user.id)"
+              >
+                追蹤
+              </button>
             </template>
           </form>
           <p></p>
@@ -52,60 +61,70 @@
 </template>
 
 <script>
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
 import { emptyImageFilter } from "./../utils/mixins";
+import usersAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
+
 export default {
   mixins: [emptyImageFilter],
   props: {
-    initialUser: {
+    user: {
       type: Object,
       require: true,
     },
-    isFollowed: {
+    initialIsFollowed: {
+      type: Boolean,
+      required: true,
+    },
+    isCurrentUser: {
       type: Boolean,
       require: true,
     },
   },
   data() {
     return {
-      user: this.initialUser,
-      currentUser: dummyUser.currentUser,
-      isCurrentUser: "",
+      isFollowed: this.initialIsFollowed,
     };
   },
-  methods: {
-    addFollow() {
-      this.user = {
-        ...this.user,
-        isFollowed: true,
-      };
-    },
-    deleteFollow() {
-      this.user = {
-        ...this.user,
-        isFollowed: false,
-      };
-    },
-    checkCurrentUser() {
-      const { id } = this.$route.params;
-      if (Number(id) === this.currentUser.id) {
-        this.isCurrentUser = true;
-      } else {
-        this.isCurrentUser = false;
-      }
+  watch: {
+    initialIsFollowed(isFollowed) {
+      this.isFollowed = isFollowed;
     },
   },
-  created() {
-    this.checkCurrentUser();
+  methods: {
+    async addFollow(userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ userId });
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.isFollowed = true;
+        console.log("add", this.initialFollowed);
+        console.log(this.isFollowed);
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法追蹤",
+        });
+      }
+    },
+    async deleteFollow(userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId });
+        console.log("delete", this.initialFollowed);
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.isFollowed = false;
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法追蹤",
+        });
+      }
+    },
   },
 };
 </script>
