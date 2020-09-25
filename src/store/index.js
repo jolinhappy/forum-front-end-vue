@@ -25,33 +25,38 @@ export default new Vuex.Store({
       }
       // 將使用者的登入狀態改為 true
       state.isAuthenticated = true
+      //取得token存在state存在state
+      state.token = localStorage.getItem('token')
     },
     //登出把現有玩家清空，改成沒有驗證，清空token
     revokeAuthentication(state) {
       state.currentUser = {}
       state.isAuthenticated = false
+      //登出清空state儲存的token
+      state.token = ''
       localStorage.removeItem('token')
     }
   },
   actions: {
     async fetchCurrentUser({ commit }) {
       try {
-        const { data: { profile }, statusText } = await usersAPI.get()
-
-        if (statusText !== 'OK') {
-          throw new Error(statusText)
+        const { data, status } = await usersAPI.getCurrentUser()
+        if (status !== 200) {
+          throw new Error(data.message)
         }
-
+        const { id, name, email, image, isAdmin } = data
         commit('setCurrentUser', {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          image: profile.image,
-          isAdmin: profile.isAdmin
+          id,
+          name,
+          email,
+          image,
+          isAdmin
         })
         return true  // add this line
       } catch (error) {
         console.error('can not fetch user information')
+        //驗證有問題的話登出
+        commit('revokeAuthentication')
         return false  // add this line
       }
     }

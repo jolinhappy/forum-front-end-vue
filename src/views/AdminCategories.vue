@@ -6,10 +6,21 @@
     <form class="my-4">
       <div class="form-row">
         <div class="col-auto">
-          <input type="text" class="form-control" placeholder="新增餐廳類別..." v-model="newCategoryName" />
+          <input
+            type="text"
+            class="form-control"
+            placeholder="新增餐廳類別..."
+            v-model="newCategoryName"
+          />
         </div>
         <div class="col-auto">
-          <button type="button" class="btn btn-primary" @click.stop.prevent="createCategory">新增</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click.stop.prevent="createCategory"
+          >
+            新增
+          </button>
         </div>
       </div>
     </form>
@@ -25,7 +36,9 @@
         <tr v-for="category in categories" :key="category.id">
           <th scope="row">{{ category.id }}</th>
           <td class="position-relative">
-            <div v-show="!category.isEditing" class="category-name">{{ category.name }}</div>
+            <div v-show="!category.isEditing" class="category-name">
+              {{ category.name }}
+            </div>
             <input
               v-show="category.isEditing"
               v-model="category.name"
@@ -36,7 +49,8 @@
               v-show="category.isEditing"
               class="cancel"
               @click.stop.prevent="handleCancel(category.id)"
-            >✕</span>
+              >✕</span
+            >
           </td>
           <td class="d-flex justify-content-between">
             <button
@@ -44,19 +58,32 @@
               type="button"
               class="btn btn-link mr-2"
               @click.stop.prevent="toggleIsEditing(category.id)"
-            >Edit</button>
+            >
+              Edit
+            </button>
             <button
               v-show="category.isEditing"
               type="button"
               class="btn btn-link mr-2"
-              @click.stop.prevent="updateCategory(category.id)"
-            >Save</button>
+              @click.stop.prevent="
+                updateCategory({
+                  categoryId: category.id,
+                  name: category.name,
+                })
+              "
+            >
+              Save
+            </button>
             <button
               type="button"
               class="btn btn-link mr-2"
-              @click.stop.prevent="deleteCategory({categoryId: category.id, name: category.name})"
+              @click.stop.prevent="
+                deleteCategory({ categoryId: category.id, name: category.name })
+              "
               :disabled="isProcessing"
-            >Delete</button>
+            >
+              Delete
+            </button>
           </td>
         </tr>
       </tbody>
@@ -175,7 +202,7 @@ export default {
         return category;
       });
     },
-    async updateCategory(categoryId, name) {
+    async updateCategory({ categoryId, name }) {
       try {
         const { data } = await adminAPI.categories.update({
           categoryId,
