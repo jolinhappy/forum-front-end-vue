@@ -33,7 +33,9 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary" :disabled="isProcesing">
+        {{ isProcesing ? "傳送中" : "送出" }}
+      </button>
     </form>
   </div>
 </template>
@@ -51,6 +53,7 @@ export default {
         image: "",
         name: "",
       },
+      isProcesing: false,
     };
   },
   created() {
@@ -82,6 +85,7 @@ export default {
     },
     async handleSubmit(e) {
       try {
+        this.isProcesing = true;
         const form = e.target;
         const formData = new FormData(form);
         const { data } = await usersAPI.update({
@@ -95,6 +99,7 @@ export default {
 
         this.$router.push({ name: "user", params: { id: this.user.id } });
       } catch (error) {
+        this.isProcesing = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",

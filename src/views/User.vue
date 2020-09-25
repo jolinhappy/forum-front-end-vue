@@ -119,13 +119,6 @@ export default {
         });
       }
     },
-    // fetchCurrentUser() {
-    //   this.currentUser = {
-    //     ...this.currentUser,
-    //     ...dummyUser.currentUser,
-    //   };
-    //   this.isAuthenticated = dummyUser.isAuthenticated;
-    // },
   },
   computed: {
     ...mapState(["currentUser"]),
