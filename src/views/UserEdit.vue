@@ -1,6 +1,5 @@
 <template>
   <div class="container py-5">
-    <!-- <UserEditForm :initial-user="user" @after-submit="handleAftersubmit" /> -->
     <form @submit.stop.prevent="handleSubmit">
       <div class="form-group">
         <label for="name">Name</label>
@@ -10,7 +9,7 @@
           name="name"
           class="form-control"
           placeholder="Enter Name"
-          v-model="name"
+          v-model="user.name"
           required
         />
       </div>
@@ -18,11 +17,11 @@
       <div class="form-group">
         <label for="image">Image</label>
         <img
-          :src="image"
+          :src="user.image"
           class="d-block"
           width="300"
           height="300"
-          v-if="image"
+          v-if="user.image"
         />
         <input
           id="image"
@@ -40,22 +39,18 @@
 </template>
 
 <script>
-// import UserEditForm from "./../components/UserEditForm";
 import usersAPI from "./../apis/users";
 import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
 
 export default {
-  // components: {
-  //   UserEditForm,
-  // },
   data() {
     return {
-      // user: {
-      id: 0,
-      image: "",
-      name: "",
-      // },
+      user: {
+        id: 0,
+        image: "",
+        name: "",
+      },
     };
   },
   created() {
@@ -72,9 +67,9 @@ export default {
         this.$router.push({ name: "not-found" });
         return;
       }
-      this.id = id;
-      this.name = name;
-      this.image = image;
+      this.user.id = id;
+      this.user.name = name;
+      this.user.image = image;
     },
     handleFileChange(e) {
       const { files } = e.target;
@@ -87,20 +82,18 @@ export default {
     },
     async handleSubmit(e) {
       try {
-        console.log(this.id);
         const form = e.target;
         const formData = new FormData(form);
-        console.log(formData);
         const { data } = await usersAPI.update({
-          userId: this.id,
+          userId: this.user.id,
           formData,
         });
         console.log(data);
-        if (data.status !== "sucess") {
+        if (data.status !== "success") {
           throw new Error(data.message);
         }
 
-        this.$router.push({ name: "user", params: { id: this.id } });
+        this.$router.push({ name: "user", params: { id: this.user.id } });
       } catch (error) {
         console.log("error", error);
         Toast.fire({

@@ -65,6 +65,7 @@ export default {
     async fetchRestaurant(restaurantId) {
       try {
         const { data } = await restaurantsAPI.getRestaurant({ restaurantId });
+        const { restaurant, isFavorited, isLiked } = data;
         const {
           id,
           name,
@@ -72,19 +73,17 @@ export default {
           tel,
           address,
           description,
-          isFavorited,
-          isLiked,
           Category,
           opening_hours,
           Comments,
-        } = data.restaurant;
+        } = restaurant;
         if (data.status === "error") {
           throw new Error(data.message);
         }
         this.restaurant = {
           id,
           name,
-          categoryName: Category.name,
+          categoryName: Category ? Category.name : "未分類",
           image,
           openingHours: opening_hours,
           tel,
@@ -93,7 +92,7 @@ export default {
           isFavorited,
           isLiked,
         };
-        this.restaurantComments = [] || Comments;
+        this.restaurantComments = Comments;
       } catch (error) {
         console.log("error", error);
         Toast.fire({
@@ -109,7 +108,6 @@ export default {
       );
     },
     afterCreateComment(payload) {
-      console.log("pay", payload);
       const { commentId, restaurantId, text } = payload;
       this.restaurantComments.push({
         id: commentId,

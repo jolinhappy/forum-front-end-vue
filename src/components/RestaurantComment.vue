@@ -9,12 +9,16 @@
           class="btn btn-danger float-right"
           v-if="currentUser.isAdmin"
           @click.stop.prevent="handleDeleteButtonClick(comment.id)"
-        >Delete</button>
+        >
+          Delete
+        </button>
         <h3>
-          <a href="#">{{comment.User.name}}</a>
+          <a href="#">{{ comment.User.name }}</a>
         </h3>
-        <p>{{comment.text}}</p>
-        <footer class="blockquote-footer">{{comment.createdAt | fromNow}}</footer>
+        <p>{{ comment.text }}</p>
+        <footer class="blockquote-footer">
+          {{ comment.createdAt | fromNow }}
+        </footer>
       </blockquote>
       <hr />
     </div>
@@ -23,6 +27,8 @@
 
 <script>
 import { fromNowFilter } from "./../utils/mixins";
+import commentsAPI from "./../apis/comments";
+import { Toast } from "./../utils/helpers";
 const dummyUser = {
   currentUser: {
     id: 1,
@@ -48,10 +54,24 @@ export default {
     };
   },
   methods: {
-    handleDeleteButtonClick(commentId) {
-      console.log("handleDeleteButtonClick", commentId);
-      // TODO: 請求 API 伺服器刪除 id 為 commentId 的評論
-      this.$emit("after-delete-comment", commentId);
+    async handleDeleteButtonClick(commentId) {
+      try {
+        const { data } = await commentsAPI.delete({ commentId });
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.$emit("after-delete-comment", commentId);
+        Toast.fire({
+          icon: "success",
+          title: "成功刪除評論",
+        });
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法刪除評論",
+        });
+      }
     },
   },
 };
