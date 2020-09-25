@@ -2,26 +2,29 @@
 <template>
   <div class="album py-5 bg-light">
     <div class="container">
-      <UserProfileCard
-        :user="user"
-        :is-current-user="currentUser.id === user.id"
-        :initial-is-followed="isFollowed"
-      />
+      <Spinner v-if="isLoading" />
+      <template v-else>
+        <UserProfileCard
+          :user="user"
+          :is-current-user="currentUser.id === user.id"
+          :initial-is-followed="isFollowed"
+        />
 
-      <div class="row">
-        <div class="col-md-4">
-          <UserFollowingsCard :followings="Followings" />
-          <br />
-          <UserFollowersCard :followers="Followers" />
+        <div class="row">
+          <div class="col-md-4">
+            <UserFollowingsCard :followings="Followings" />
+            <br />
+            <UserFollowersCard :followers="Followers" />
+          </div>
+          <div class="col-md-8">
+            <UserCommentsCard :comments="Comments" />
+            <br />
+            <UserFavoritedRestaurantsCard
+              :favoritedRestaurants="FavoritedRestaurants"
+            />
+          </div>
         </div>
-        <div class="col-md-8">
-          <UserCommentsCard :comments="Comments" />
-          <br />
-          <UserFavoritedRestaurantsCard
-            :favoritedRestaurants="FavoritedRestaurants"
-          />
-        </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -36,6 +39,7 @@ import UserFavoritedRestaurantsCard from "./../components/UserFavoritedRestauran
 import usersAPI from "./../apis/users";
 import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
+import Spinner from "./../components/Spinner";
 
 export default {
   components: {
@@ -44,6 +48,7 @@ export default {
     UserFollowersCard,
     UserCommentsCard,
     UserFavoritedRestaurantsCard,
+    Spinner,
   },
   data() {
     return {
@@ -62,6 +67,7 @@ export default {
       Comments: [],
       FavoritedRestaurants: [],
       isFollowed: false,
+      isLoading: true,
     };
   },
   created() {
@@ -76,6 +82,7 @@ export default {
   methods: {
     async fetchUserData(userId) {
       try {
+        this.isLoading = true;
         const { data } = await usersAPI.get({ userId });
         const { profile, isFollowed } = data;
         const {
@@ -102,7 +109,9 @@ export default {
         this.Comments = Comments;
         this.FavoritedRestaurants = FavoritedRestaurants;
         this.isFollowed = isFollowed;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",

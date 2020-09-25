@@ -1,10 +1,13 @@
 <template>
   <div class="container py-5">
-    <AdminRestaurantForm
-      @after-submit="handleAfterSubmit"
-      :initial-restaurant="restaurant"
-      :isProcessing="isProcessing"
-    />
+    <Spinner v-if="isLoading" />
+    <template v-else>
+      <AdminRestaurantForm
+        @after-submit="handleAfterSubmit"
+        :initial-restaurant="restaurant"
+        :isProcessing="isProcessing"
+      />
+    </template>
   </div>
 </template>
 
@@ -12,10 +15,12 @@
 import AdminRestaurantForm from "./../components/AdminRestaurantForm.vue";
 import adminAPI from "./../apis/admin";
 import { Toast } from "./../utils/helpers";
+import Spinner from "./../components/Spinner";
 
 export default {
   components: {
     AdminRestaurantForm,
+    Spinner,
   },
   data() {
     return {
@@ -30,6 +35,7 @@ export default {
         openingHours: "",
       },
       isProcessing: false,
+      isLoading: true,
     };
   },
   created() {
@@ -53,7 +59,9 @@ export default {
           return;
         }
         this.$router.push({ name: "admin-restaurants" });
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         console.log("error", error);
         Toast.fire({
           icon: "error",

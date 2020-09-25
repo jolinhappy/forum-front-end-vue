@@ -27,7 +27,9 @@
           v-for="category in categories"
           :key="category.id"
           :value="category.id"
-        >{{ category.name }}</option>
+        >
+          {{ category.name }}
+        </option>
       </select>
     </div>
 
@@ -79,7 +81,13 @@
 
     <div class="form-group">
       <label for="image">Image</label>
-      <img :src="restaurant.image" class="d-block" width="200" height="200" v-if="restaurant.image" />
+      <img
+        :src="restaurant.image"
+        class="d-block"
+        width="200"
+        height="200"
+        v-if="restaurant.image"
+      />
       <input
         id="image"
         type="file"
@@ -90,11 +98,9 @@
       />
     </div>
 
-    <button
-      type="submit"
-      class="btn btn-primary"
-      :disabled="isProcessing"
-    >{{ isProcessing ? "處理中..." : "送出" }}</button>
+    <button type="submit" class="btn btn-primary" :disabled="isProcessing">
+      {{ isProcessing ? "處理中..." : "送出" }}
+    </button>
   </form>
 </template>
 

@@ -48,22 +48,6 @@
 import { mapState } from "vuex";
 
 export default {
-  // data() {
-  //   return {
-  //     currentUser: {
-  //       id: -1,
-  //       name: "",
-  //       email: "",
-  //       image: "",
-  //       isAdmin: false,
-  //     },
-  //     isAuthenticated: false,
-  //   };
-  // },
-  // created() {
-  //   this.fetchUser();
-  // },
-
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
@@ -75,3 +59,20 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.navbar-toggler {
+  min-width: 70px;
+  margin-right: 0;
+}
+
+nav.bg-dark {
+  padding: 14px 16px;
+  background-color: #bd2333 !important;
+}
+
+.navbar-brand {
+  font-size: 19px;
+  padding: 0;
+}
+</style>
